@@ -12,16 +12,16 @@ systems({
     provision: [
       "bundle install --path /azk/bundler",
       "bundle exec rake db:create RACK_ENV=production",
-      "bundle exec rake db:schema:load RACK_ENV=production",
+      // "bundle exec rake db:schema:load RACK_ENV=production",
+      "bundle exec rake db:migrate RACK_ENV=production",
       "echo \"Lobsters::Application.config.secret_key_base = '$(bundle exec rake secret)'\" > config/initializers/secret_token.rb",
       "bundle exec rake db:seed RACK_ENV=production",
-      // "bundle exec rake db:migrate RACK_ENV=production",
     ],
     workdir: "/azk/#{manifest.dir}",
     shell: "/bin/bash",
 
     // command: "bundle exec unicorn -p $HTTP_PORT -c ./config/unicorn.rb",
-    command: "bundle exec rails server",
+    command: "bundle exec rails server -p $HTTP_PORT -P /tmp/ruby.pid -b 0.0.0.0",
 
     wait: 20,
     mounts: {
@@ -74,55 +74,6 @@ systems({
       DATABASE_URL: "mysql2://#{envs.MYSQL_USER}:#{envs.MYSQL_PASS}@#{net.host}:#{net.port.data}/${envs.MYSQL_DATABASE}",
     },
   },
-
-  // // sidekiq
-  // worker: {
-  //   extends: "stringer",
-  //   depends: [ "stringer", "postgres", "redis" ],
-  //   provision: null,
-  //   command: "bundle exec sidekiq -q default -r ./config/sidekiq.rb -v",
-  //   http: null,
-  //   ports: null,
-  // },
-  // redis: {
-  //   image: { docker: "redis" },
-  //   export_envs: {
-  //     "REDIS_URL": "redis://#{net.host}:#{net.port[6379]}",
-  //   }
-  // },
-
-  // postgres: {
-  //   depends: [],
-  //   image: {"docker": "azukiapp/postgres:9.3"},
-  //   shell: "/bin/bash",
-  //   wait: 20,
-  //   mounts: {
-  //     '/var/lib/postgresql/data': persistent("postgresql"),
-  //     '/var/log/postgresql': path("./log/postgresql"),
-  //   },
-  //   ports: {
-  //     data: "5432/tcp",
-  //   },
-  //   envs: {
-  //     // set instances variables
-  //     POSTGRESQL_USER: "stringer",
-  //     POSTGRESQL_PASS: "EDIT_ME",
-  //     POSTGRESQL_DB: "stringer_live",
-  //   },
-  //   export_envs: {
-  //     // check this gist to configure your database
-  //     // https://gist.github.com/gullitmiranda/62082f2e47c364ef9617
-  //     DATABASE_URL: "postgres://#{envs.POSTGRESQL_USER}:#{envs.POSTGRESQL_PASS}@#{net.host}:#{net.port.data}/${envs.POSTGRESQL_DB}",
-
-  //     STRINGER_DATABASE: "${envs.POSTGRESQL_DB}",
-  //     STRINGER_DATABASE_USERNAME: "${envs.POSTGRESQL_USER}",
-  //     STRINGER_DATABASE_PASSWORD: "${envs.POSTGRESQL_PASS}",
-  //     STRINGER_DATABASE_HOST: "#{net.host}",
-  //     STRINGER_DATABASE_PORT: "#{net.port.data}",
-
-  //     RACK_ENV: "production",
-  //   },
-  // },
 
   deploy: {
     image: {"docker": "azukiapp/deploy-digitalocean"},
