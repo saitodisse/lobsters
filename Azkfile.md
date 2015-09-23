@@ -1,18 +1,15 @@
 # Lobsters :: Azkfile.js
 
-## Systems in Manifest
+### How to run
 
-### Lobsters (default)
-
-- lobsters
+1) Before starts Lobsters for the first time you should run this command:
 
 ```sh
-azk start -Rv
+azk shell lobsters -c'bundle exec rake db:setup RACK_ENV=production'
+azk restart -Rvv
 ```
 
---------------------
-
-#### How to run
+2) Open http://lobsters.dev.azk.io/ and start with this user:
 
 - user: test
 - password: test

@@ -11,11 +11,8 @@ systems({
     // Steps to execute before running instances
     provision: [
       "bundle install --path /azk/bundler",
-      "bundle exec rake db:create RACK_ENV=production",
-      // "bundle exec rake db:schema:load RACK_ENV=production",
       "bundle exec rake db:migrate RACK_ENV=production",
       "echo \"Lobsters::Application.config.secret_key_base = '$(bundle exec rake secret)'\" > config/initializers/secret_token.rb",
-      "bundle exec rake db:seed RACK_ENV=production",
     ],
     workdir: "/azk/#{manifest.dir}",
     shell: "/bin/bash",
