@@ -5,7 +5,14 @@
 1) Before starts Lobsters for the first time you should run this command:
 
 ```sh
+# initial lobsters setup
 azk shell lobsters -c'bundle exec rake db:setup RACK_ENV=production'
+
+# sphinx
+azk shell lobsters -c'bundle exec rake ts:rebuild RACK_ENV=production'
+azk shell sphinx -c'./entrypoint.sh sphinx'
+
+# start all
 azk restart -Rvv
 ```
 

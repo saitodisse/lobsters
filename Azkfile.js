@@ -72,6 +72,30 @@ systems({
     },
   },
 
+  sphinx: {
+    depends: ["mysql"],
+    image: {"docker": "gillbeits/sphinxsearch"},
+    shell: "/bin/bash",
+    wait: 25,
+    command: "./entrypoint.sh sphinx",
+    mounts: {
+      "/azk/#{manifest.dir}": path("."),
+      "/etc/sphinx/sphinx.conf": path("./config/production.sphinx.conf"),
+      // "/etc/sphinx": path("./sphinx/etc/sphinx"),
+      // "/var/spool/cron": path("./sphinx/var/spool/cron"),
+      // "/var/lib/sphinx": path("./sphinx/var/lib/sphinx"),
+      // "/var/log/sphinx": path("./sphinx/var/log/sphinx"),
+    },
+    ports: {
+      sql: "9306/tcp",
+      client: "9312/tcp",
+    },
+    envs: {
+    },
+    export_envs: {
+    },
+  },
+
   deploy: {
     image: {"docker": "azukiapp/deploy-digitalocean"},
     mounts: {
